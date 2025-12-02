@@ -37,6 +37,10 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov black flake8 mypy
       
+      - name: Install package
+        run: |
+          pip install -e .
+      
       - name: Run tests with coverage
         run: |
           pytest tests/ --cov=src/thermodynamic_truth --cov-report=xml --cov-report=term-missing --cov-fail-under=0
