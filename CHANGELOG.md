@@ -1,3 +1,9 @@
+## [1.0.1] - 2025-12-01
+
+### Fixed
+- Updated copyright notice in README to "Kevin KULL"
+- Corrected author attribution throughout documentation
+
 # Changelog
 
 All notable changes to the ThermoTruth Protocol will be documented in this file.

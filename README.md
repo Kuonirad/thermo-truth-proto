@@ -83,4 +83,4 @@ See [Quick Start Guide](docs/QUICK_START_GUIDE.pdf) for the planned operator int
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2025 ThermoTruth Initiative.
+Copyright (c) 2025 Kevin KULL.
