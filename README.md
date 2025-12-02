@@ -9,6 +9,25 @@ Unlike traditional BFT protocols that rely on voting (communication-heavy) or Pr
 
 ![Dashboard](docs/dashboard_annotated.png)
 
+## ⚠️ Development Status
+
+**Current State**: This repository contains the theoretical framework, whitepaper, and conceptual benchmarks for ThermoTruth. **The core protocol implementation is actively under development.**
+
+**Available Now**:
+- ✅ Comprehensive whitepaper with thermodynamic derivations
+- ✅ Theoretical framework and protocol specification
+- ✅ Conceptual benchmark simulations
+- ✅ Research documentation
+
+**In Development**:
+- 🚧 Core consensus protocol implementation
+- 🚧 Network layer (gRPC communication)
+- 🚧 Node runtime and CLI tools
+- 🚧 Real distributed benchmarks
+- 🚧 Validation tests
+
+The claims below are based on theoretical analysis and simulated models. Experimental validation with a working implementation is ongoing.
+
 ## 🚀 Key Claims
 
 Based on experimental results (see `docs/results_section.pdf`):
@@ -21,13 +40,26 @@ Based on experimental results (see `docs/results_section.pdf`):
 
 ## 📦 Installation
 
+**Note**: The package is not yet available on PyPI as the implementation is under development.
+
+To explore the theoretical framework and run conceptual benchmarks:
+
 ```bash
-pip install thermodynamic-truth
+# Clone the repository
+git clone https://github.com/Kuonirad/thermo-truth-proto.git
+cd thermo-truth-proto
+
+# Install dependencies for benchmarks
+pip install numpy matplotlib
+
+# Run conceptual benchmarks
+python benchmarks/comparative_benchmark.py
+python benchmarks/ablation_study.py
 ```
 
-## ⚡ Quick Start
+## ⚡ Quick Start (Coming Soon)
 
-Start a local 4-node cluster:
+Once the implementation is complete, you'll be able to start a local cluster:
 
 ```bash
 # Terminal 1: Start the bootstrap node
@@ -37,14 +69,13 @@ python -m thermodynamic_truth.node --id 0 --port 50051
 python -m thermodynamic_truth.node --id 1 --port 50052 --peer localhost:50051
 ```
 
-See [Quick Start Guide](docs/QUICK_START_GUIDE.pdf) for detailed operator instructions.
+See [Quick Start Guide](docs/QUICK_START_GUIDE.pdf) for the planned operator interface.
 
 ## 📂 Repository Structure
 
-*   `src/`: Core protocol implementation (Python).
-*   `benchmarks/`: Scripts for reproducing the experimental results (PBFT/HBBFT comparison).
-*   `docs/`: Research papers, test plans, and guides.
-*   `examples/`: Sample applications and deployment configurations.
+*   `src/`: Core protocol implementation (under development).
+*   `benchmarks/`: Conceptual benchmark simulations comparing theoretical performance.
+*   `docs/`: Research papers, whitepaper, test plans, and guides.
 
 ## 📜 License
 
