@@ -1,5 +1,7 @@
 # ThermoTruth Protocol: Thermodynamic Consensus for Sybil-Resistant Networks
 
+**Author**: Kevin KULL | **X.com**: [@KULLAILABS](https://x.com/KULLAILABS)
+
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-brightgreen.svg)](https://www.python.org/)
 
