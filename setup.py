@@ -15,7 +15,7 @@ def read_file(filename):
 
 setup(
     name="thermodynamic-truth",
-    version="1.0.1",
+    version="1.1.0",
     author="Kevin KULL",
     author_email="research@thermodynamic-truth.org",
     description="Byzantine Fault Tolerant Consensus Based on Thermodynamic Principles",

@@ -238,15 +238,19 @@ class ThermodynamicEnsemble:
         weighted_state = np.average(state_vectors, axis=0, weights=weights)
         return weighted_state
 
-    def filter_byzantine_states(self, threshold: float = 3.0) -> "ThermodynamicEnsemble":
+    def filter_byzantine_states(self, threshold: float = 2.5) -> "ThermodynamicEnsemble":
         """
-        Filter out Byzantine (outlier) states using statistical detection.
+        Filter out Byzantine (outlier) states using robust statistical detection.
 
-        Remove states that are more than `threshold` standard deviations
-        from the mean.
+        Uses Median Absolute Deviation (MAD) instead of mean/std, which is
+        resistant to outlier contamination. This prevents Byzantine nodes
+        from inflating the std_dev and evading detection.
+
+        MAD = median(|X_i - median(X)|)
+        Modified Z-score = 0.6745 * (X_i - median(X)) / MAD
 
         Args:
-            threshold: Number of standard deviations for outlier detection
+            threshold: Modified Z-score threshold (default 2.5 ≈ 3σ for normal data)
 
         Returns:
             New ensemble with Byzantine states removed
@@ -254,15 +258,28 @@ class ThermodynamicEnsemble:
         if len(self.states) < 3:
             return self
 
-        mean_state = self.compute_mean_state()
-        variance = self.compute_variance()
-        std_dev = np.sqrt(variance)
+        # Compute median state (robust central tendency)
+        state_vectors = np.array([s.state_vector for s in self.states])
+        median_state = np.median(state_vectors, axis=0)
+
+        # Compute MAD (robust scale estimator)
+        deviations = np.array([np.linalg.norm(s.state_vector - median_state) 
+                               for s in self.states])
+        mad = np.median(deviations)
+
+        # Avoid division by zero
+        if mad < 1e-10:
+            # All states are identical (or near-identical)
+            return self
+
+        # Compute modified Z-scores (robust outlier detection)
+        # Factor 0.6745 makes MAD comparable to std for normal distributions
+        modified_z_scores = 0.6745 * deviations / mad
 
         # Filter states within threshold
         filtered_states = []
-        for state in self.states:
-            deviation = np.linalg.norm(state.state_vector - mean_state)
-            if deviation <= threshold * std_dev:
+        for i, state in enumerate(self.states):
+            if modified_z_scores[i] <= threshold:
                 filtered_states.append(state)
 
         # Create new ensemble
