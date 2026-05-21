@@ -13,9 +13,6 @@ import time
 import numpy as np
 from typing import List
 
-# Add parent directory to path for imports
-sys.path.insert(0, "/home/ubuntu/thermo-truth-proto/src")
-
 from thermodynamic_truth.core.protocol import ThermodynamicTruth
 from thermodynamic_truth.network.server import ThermoNodeServer
 from thermodynamic_truth.network.client import PeerManager

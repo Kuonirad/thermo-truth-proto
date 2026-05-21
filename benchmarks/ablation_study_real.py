@@ -5,9 +5,6 @@ Tests the actual impact of removing protocol components.
 This validates the thermodynamic necessity claims with real measurements.
 """
 
-import sys
-sys.path.insert(0, '/home/ubuntu/thermo-truth-proto/src')
-
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')

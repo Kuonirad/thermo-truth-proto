@@ -3,12 +3,10 @@ Byzantine Threshold Test - REAL Protocol Execution
 Tests ThermoTruth's resilience at 30%, 33%, 40%, 50% Byzantine ratios
 """
 
-import sys
-sys.path.insert(0, '/home/ubuntu/thermo-truth-proto/src')
-
 import numpy as np
 import time
 import json
+from pathlib import Path
 from thermodynamic_truth.core.protocol import ThermodynamicTruth
 from thermodynamic_truth.core.pow import ProofOfWork
 from thermodynamic_truth.core.state import ConsensusState
@@ -126,7 +124,7 @@ def main():
         time.sleep(0.5)  # Brief pause between tests
     
     # Save results
-    output_file = '/home/ubuntu/thermo-truth-proto/validation/byzantine_results.json'
+    output_file = Path(__file__).resolve().parent / 'byzantine_results.json'
     with open(output_file, 'w') as f:
         json.dump(all_results, f, indent=2)
     
