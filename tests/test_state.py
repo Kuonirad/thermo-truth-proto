@@ -234,8 +234,88 @@ class TestThermodynamicEnsemble:
 
         entropy = ensemble.compute_entropy()
 
-        # Entropy should be positive for non-uniform distribution
-        assert entropy >= 0.0
+        # Two equally-represented distinct vectors -> H = log2(2) = 1.
+        assert entropy == pytest.approx(1.0)
+
+    def test_entropy_zero_for_identical_state_vectors(self):
+        """
+        Falsification test for the metadata-leakage bug:
+        if compute_entropy() were still computed over compute_hash() (which
+        mixes in per-state nonce/timestamp/proposer_id), an ensemble of n
+        identical state vectors would report H = log2(n) instead of 0.
+        """
+        ensemble = ThermodynamicEnsemble()
+        for i in range(5):
+            ensemble.add_state(
+                ConsensusState(
+                    state_vector=np.array([1.0, 2.0, 3.0]),
+                    energy=1e-6,
+                    timestamp=1.0 + i * 1e-9,
+                    proposer_id=f"n{i}",
+                    nonce=i,
+                    difficulty=0.0,
+                )
+            )
+        assert ensemble.compute_entropy() == pytest.approx(0.0, abs=1e-9)
+
+    def test_entropy_maximum_for_fully_disagreeing_states(self):
+        """n fully-distinct state vectors -> H = log2(n)."""
+        ensemble = ThermodynamicEnsemble()
+        for i in range(4):
+            ensemble.add_state(
+                ConsensusState(
+                    state_vector=np.array([float(i)]),
+                    energy=1e-6,
+                    timestamp=0.0,
+                    proposer_id=f"n{i}",
+                    nonce=i,
+                    difficulty=0.0,
+                )
+            )
+        assert ensemble.compute_entropy() == pytest.approx(np.log2(4))
+
+    def test_entropy_mixed_majority_minority(self):
+        """3 states share vector A, 1 holds B -> H = -(0.75 log2 0.75 + 0.25 log2 0.25)."""
+        ensemble = ThermodynamicEnsemble()
+        for i in range(3):
+            ensemble.add_state(
+                ConsensusState(
+                    state_vector=np.array([1.0]),
+                    energy=1e-6,
+                    timestamp=0.0,
+                    proposer_id=f"a{i}",
+                    nonce=i,
+                    difficulty=0.0,
+                )
+            )
+        ensemble.add_state(
+            ConsensusState(
+                state_vector=np.array([2.0]),
+                energy=1e-6,
+                timestamp=0.0,
+                proposer_id="b0",
+                nonce=99,
+                difficulty=0.0,
+            )
+        )
+        expected = -(0.75 * np.log2(0.75) + 0.25 * np.log2(0.25))
+        assert ensemble.compute_entropy() == pytest.approx(expected)
+
+    def test_entropy_tolerates_floating_point_dust(self):
+        """1e-12 noise on a single component must NOT fragment otherwise-equal vectors."""
+        ensemble = ThermodynamicEnsemble()
+        for i in range(5):
+            ensemble.add_state(
+                ConsensusState(
+                    state_vector=np.array([1.0 + i * 1e-12]),
+                    energy=1e-6,
+                    timestamp=0.0,
+                    proposer_id=f"n{i}",
+                    nonce=i,
+                    difficulty=0.0,
+                )
+            )
+        assert ensemble.compute_entropy() == pytest.approx(0.0, abs=1e-9)
 
     def test_compute_free_energy(self):
         """Test Helmholtz free energy computation (F = U - TS)."""
