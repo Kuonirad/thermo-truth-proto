@@ -3,7 +3,6 @@ FROM python:3.11-slim
 
 LABEL maintainer="ThermoTruth Initiative <info@thermodynamic-truth.org>"
 LABEL description="Thermodynamic Consensus Protocol - Byzantine Fault Tolerant consensus"
-LABEL version="0.1.0"
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
