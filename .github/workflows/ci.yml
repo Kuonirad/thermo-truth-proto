@@ -79,6 +79,32 @@ jobs:
         run: |
           flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Keep-a-Changelog ordering check
+        run: |
+          python - <<'PY'
+          import re, sys
+          lines = open('CHANGELOG.md').read().splitlines()
+          if not any(l.strip() == '# Changelog' for l in lines):
+              sys.exit("CHANGELOG.md: missing top-level '# Changelog' heading")
+          headings = [l for l in lines if re.match(r'^## (\[Unreleased\]|\[\d)', l)]
+          if not headings:
+              sys.exit("CHANGELOG.md: no version sections found")
+          if not headings[0].startswith('## [Unreleased]'):
+              sys.exit(f"CHANGELOG.md: [Unreleased] must be first version heading, got: {headings[0]!r}")
+          # Released versions after [Unreleased] must be in descending semver order.
+          ver_re = re.compile(r'^## \[(\d+)\.(\d+)\.(\d+)\]')
+          versions = []
+          for h in headings[1:]:
+              m = ver_re.match(h)
+              if not m:
+                  sys.exit(f"CHANGELOG.md: malformed version heading: {h!r}")
+              versions.append(tuple(int(x) for x in m.groups()))
+          for a, b in zip(versions, versions[1:]):
+              if a <= b:
+                  sys.exit(f"CHANGELOG.md: versions not in descending order: {a} before {b}")
+          print(f"CHANGELOG.md OK ({len(versions)} released versions, descending)")
+          PY
       
       - name: Type check with mypy
         run: |
