@@ -263,8 +263,7 @@ class ThermodynamicEnsemble:
         median_state = np.median(state_vectors, axis=0)
 
         # Compute MAD (robust scale estimator)
-        deviations = np.array([np.linalg.norm(s.state_vector - median_state) 
-                               for s in self.states])
+        deviations = np.array([np.linalg.norm(s.state_vector - median_state) for s in self.states])
         mad = np.median(deviations)
 
         # Avoid division by zero
