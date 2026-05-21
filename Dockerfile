@@ -3,7 +3,6 @@ FROM python:3.11-slim
 
 LABEL maintainer="ThermoTruth Initiative <info@thermodynamic-truth.org>"
 LABEL description="Thermodynamic Consensus Protocol - Byzantine Fault Tolerant consensus"
-LABEL version="0.1.0"
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -35,7 +34,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code
 COPY --chown=thermo:thermo src/ ./src/
-COPY --chown=thermo:thermo setup.py pyproject.toml README.md LICENSE ./
+COPY --chown=thermo:thermo pyproject.toml README.md LICENSE ./
 
 # Install the package
 RUN pip install --no-cache-dir -e .
