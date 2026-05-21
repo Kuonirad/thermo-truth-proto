@@ -1,3 +1,20 @@
+# Changelog
+
+All notable changes to the ThermoTruth Protocol will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Production-grade publishing pipeline with PyPI trusted publishing
+- GitHub Packages mirror for enterprise users
+- Sigstore keyless signing for all releases
+- SLSA Level 3 provenance attestation
+- CycloneDX SBOM generation
+- Comprehensive RELEASING.md documentation
+
 ## [1.1.0] - 2025-12-03
 
 ### Fixed
@@ -15,29 +32,11 @@
 - `validation/byzantine_threshold_test.py` - Real Byzantine resilience testing
 - `validation/BYZANTINE_FIX_REPORT.md` - Comprehensive fix documentation
 
-
 ## [1.0.1] - 2025-12-01
 
 ### Fixed
 - Updated copyright notice in README to "Kevin KULL"
 - Corrected author attribution throughout documentation
-
-# Changelog
-
-All notable changes to the ThermoTruth Protocol will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-### Added
-- Production-grade publishing pipeline with PyPI trusted publishing
-- GitHub Packages mirror for enterprise users
-- Sigstore keyless signing for all releases
-- SLSA Level 3 provenance attestation
-- CycloneDX SBOM generation
-- Comprehensive RELEASING.md documentation
 
 ## [1.0.0] - 2025-12-01
 
@@ -107,6 +106,8 @@ Security-related changes and fixes.
 
 ---
 
-[Unreleased]: https://github.com/Kuonirad/thermo-truth-proto/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/Kuonirad/thermo-truth-proto/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Kuonirad/thermo-truth-proto/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Kuonirad/thermo-truth-proto/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/Kuonirad/thermo-truth-proto/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/Kuonirad/thermo-truth-proto/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/Kuonirad/thermo-truth-proto/releases/tag/v0.1.0

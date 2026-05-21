@@ -107,6 +107,7 @@ class ProofOfWork:
         attempts = 0
 
         while attempts < max_attempts:
+            attempts += 1
             state_hash = self.compute_hash(state_vector, timestamp, proposer_id, nonce)
 
             if state_hash.startswith(target_prefix):
@@ -115,7 +116,6 @@ class ProofOfWork:
                 return nonce, energy_spent, state_hash, timestamp
 
             nonce += 1
-            attempts += 1
 
         # Failed to find valid nonce
         raise RuntimeError(f"Failed to mine valid nonce after {max_attempts} attempts")

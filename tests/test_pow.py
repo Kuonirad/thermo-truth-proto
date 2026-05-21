@@ -313,9 +313,10 @@ class TestEdgeCases:
             state_vector, "test_node", difficulty=0.0
         )
 
-        # Should succeed immediately
+        # Should succeed on the first hash attempt.
         assert nonce == 0
-        assert energy == 0.0
+        # One hash was still computed to confirm the match — energy reflects that.
+        assert energy == pow_engine.energy_per_hash
 
     def test_adaptive_difficulty_disabled(self):
         """Test adaptive difficulty when disabled."""
