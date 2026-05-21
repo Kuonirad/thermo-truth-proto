@@ -5,9 +5,6 @@ This benchmark runs the ACTUAL ThermoTruth protocol and measures real performanc
 Unlike the original mock benchmark, this provides verifiable experimental results.
 """
 
-import sys
-sys.path.insert(0, '/home/ubuntu/thermo-truth-proto/src')
-
 import time
 import numpy as np
 import matplotlib
