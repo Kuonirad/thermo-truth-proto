@@ -10,8 +10,6 @@ import sys
 import json
 import numpy as np
 
-sys.path.insert(0, "/home/ubuntu/thermo-truth-proto/src")
-
 from thermodynamic_truth.network.client import ThermoNodeClient
 
 

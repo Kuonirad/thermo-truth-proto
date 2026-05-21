@@ -12,8 +12,6 @@ import numpy as np
 import json
 from typing import List, Dict
 
-sys.path.insert(0, "/home/ubuntu/thermo-truth-proto/src")
-
 from thermodynamic_truth.core.protocol import ThermodynamicTruth
 from thermodynamic_truth.core.state import ConsensusState
 

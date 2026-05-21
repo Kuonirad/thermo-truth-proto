@@ -11,9 +11,6 @@ Tests cover:
 
 import pytest
 import numpy as np
-import sys
-
-sys.path.insert(0, "/home/ubuntu/thermo-truth-proto/src")
 
 from thermodynamic_truth.core.pow import ProofOfWork, EnergyBudget
 

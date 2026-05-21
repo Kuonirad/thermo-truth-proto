@@ -9,6 +9,7 @@ properties (temperature, entropy, energy) computed from the ensemble.
 import numpy as np
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, field
+from collections import Counter
 import hashlib
 import time
 
@@ -129,30 +130,38 @@ class ThermodynamicEnsemble:
         self.temperature = (2.0 / 3.0) * variance / k_eff
         return self.temperature
 
-    def compute_entropy(self) -> float:
+    def compute_entropy(self, decimals: int = 6) -> float:
         """
         Compute Shannon entropy of the state distribution.
 
-        H = -Σ p_i log(p_i)
+        H = -Σ p_i log2(p_i)
 
-        We discretize the state space and compute probabilities.
+        Entropy is computed over the *state-vector content* of each
+        ConsensusState, not over each state's cryptographic hash. The hash
+        mixes in per-state metadata (nonce, timestamp, proposer_id), which
+        makes every hash unique by construction and would force H to
+        always equal log2(n) regardless of whether nodes actually agree.
+
+        Args:
+            decimals: Decimal places to quantize each component to before
+                bucketing. Guards against floating-point dust fragmenting
+                otherwise-equal state vectors.
 
         Returns:
-            Shannon entropy (bits)
+            Shannon entropy (bits). 0.0 when all states share a vector;
+            log2(n) when all n states disagree.
         """
         if len(self.states) < 2:
             return 0.0
 
-        # Discretize states by hashing
-        state_hashes = [s.compute_hash() for s in self.states]
-        unique_hashes, counts = np.unique(state_hashes, return_counts=True)
+        # Quantize, then bucket identical vectors together.
+        keys = [tuple(np.round(s.state_vector, decimals=decimals)) for s in self.states]
+        counts = np.array(list(Counter(keys).values()), dtype=np.float64)
 
-        # Compute probabilities
-        probabilities = counts / len(state_hashes)
-
-        # Shannon entropy
-        entropy = -np.sum(probabilities * np.log2(probabilities + 1e-10))
-        return entropy
+        probabilities = counts / counts.sum()
+        # Probabilities are strictly > 0 (they come from a Counter), so log2 is safe;
+        # the small epsilon is a defensive floor for extreme rounding cases only.
+        return float(-np.sum(probabilities * np.log2(probabilities + 1e-12)))
 
     def compute_total_energy(self) -> float:
         """

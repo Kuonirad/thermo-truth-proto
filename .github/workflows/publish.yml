@@ -259,12 +259,12 @@ jobs:
       
       - name: Run basic smoke test
         run: |
-          python -c "
-          from thermodynamic_truth.core import ThermodynamicTruth
+          python - <<'PY'
           import numpy as np
-          
-          protocol = ThermodynamicTruth(node_id='test', n_states=4)
-          state = protocol.create_genesis()
-          print(f'✅ Protocol initialized successfully')
-          print(f'Genesis state: {state.state_vector[:3]}...')
-          "
+          from thermodynamic_truth.core import ThermodynamicTruth
+
+          protocol = ThermodynamicTruth(node_id='test', n_replicas=4)
+          state = protocol.create_genesis(np.zeros(8))
+          assert state.metadata.get('genesis') is True, "genesis flag missing"
+          print(f"OK protocol={protocol.node_id} genesis_vec={state.state_vector[:3]}")
+          PY
