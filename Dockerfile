@@ -34,7 +34,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code
 COPY --chown=thermo:thermo src/ ./src/
-COPY --chown=thermo:thermo setup.py pyproject.toml README.md LICENSE ./
+COPY --chown=thermo:thermo pyproject.toml README.md LICENSE ./
 
 # Install the package
 RUN pip install --no-cache-dir -e .
