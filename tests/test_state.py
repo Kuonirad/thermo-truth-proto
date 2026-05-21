@@ -336,6 +336,9 @@ class TestThermodynamicEnsemble:
 
     def test_filter_byzantine_states(self):
         """Test Byzantine state filtering."""
+        # Seed RNG so the "clustered" honest states are deterministic — without
+        # this the MAD filter occasionally eats a tail-end honest sample.
+        np.random.seed(0)
         ensemble = ThermodynamicEnsemble()
 
         # Add honest states (clustered)
