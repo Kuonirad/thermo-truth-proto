@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import thermo_protocol_pb2 as thermo__protocol__pb2
+from . import thermo_protocol_pb2 as thermo__protocol__pb2
 
 GRPC_GENERATED_VERSION = "1.76.0"
 GRPC_VERSION = grpc.__version__
