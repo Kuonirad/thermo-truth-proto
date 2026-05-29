@@ -1,134 +1,239 @@
-# ThermoTruth Protocol: Thermodynamic Consensus for Sybil-Resistant Networks
+# ThermoTruth Protocol
 
-**Author**: Kevin KULL | **X.com**: [@KULLAILABS](https://x.com/kevinkull)
+### Thermodynamic Consensus for Sybil-Resistant Networks
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.11%2B-brightgreen.svg)](https://www.python.org/)
+[![PyPI version](https://img.shields.io/pypi/v/thermodynamic-truth.svg)](https://pypi.org/project/thermodynamic-truth/)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![CI](https://github.com/Kuonirad/thermo-truth-proto/actions/workflows/ci.yml/badge.svg)](https://github.com/Kuonirad/thermo-truth-proto/actions/workflows/ci.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Status](https://img.shields.io/badge/status-alpha-orange.svg)](https://pypi.org/project/thermodynamic-truth/)
 
-**Thermodynamic Truth** is a novel consensus protocol that leverages physical laws—specifically energy conservation and entropy minimization—to achieve Byzantine Fault Tolerance (BFT) in open, permissionless networks.
+**ThermoTruth** is a consensus protocol that treats agreement as a *physical*
+process. Node proposals form a statistical ensemble whose **temperature**
+(disagreement), **entropy** (disorder), and **free energy** are measured
+directly; simulated annealing then drives that ensemble toward a low-energy,
+high-coherence consensus state. Proof-of-Work is repurposed not as a lottery but
+as a **thermodynamic cost function** that makes Sybil identities expensive while
+preserving **O(n)** scalability.
 
-Unlike traditional BFT protocols that rely on voting (communication-heavy) or Proof-of-Work that relies on lottery (energy-wasteful), ThermoTruth uses **Proof-of-Work as a thermodynamic cost function** to secure the network against Sybil attacks while maintaining **$O(n)$ scalability**.
+> **Author:** Kevin KULL · **X:** [@KULLAILABS](https://x.com/KULLAILABS)
 
-![Dashboard](docs/dashboard_annotated.png)
+![ThermoTruth consensus dashboard](docs/dashboard_annotated.png)
 
-## ✅ Production Status
+---
 
-**Current State**: **PRODUCTION-READY** – Complete implementation with comprehensive testing, CI/CD, and live PyPI distribution.
+## Table of Contents
 
-**v1.0.1 Released** (Dec 1, 2025):
-- ✅ **Complete protocol implementation** (3,951 lines of production code)
-- ✅ **Comprehensive test suite** (41 tests, 90%+ coverage)
-- ✅ **Bug discovered and fixed** (PoW timestamp validation)
-- ✅ **Full CI/CD pipeline** (GitHub Actions, 6 jobs)
-- ✅ **Docker deployment** (multi-node cluster ready)
-- ✅ **Live on PyPI** – `pip install thermodynamic-truth`
-- ✅ **Production infrastructure** (trusted publishing, OIDC, Sigstore)
+- [Why ThermoTruth](#why-thermotruth)
+- [How It Works](#how-it-works)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Benchmarks & Results](#benchmarks--results)
+- [Project Status](#project-status)
+- [Repository Layout](#repository-layout)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Citation](#citation)
+- [License](#license)
 
-**Transformation**: Applied Code Resurrection Protocol (CRP) – transformed from theoretical framework to production-ready system in 13 hours.
+---
 
-**Documentation**: See [docs/INDEX.md](docs/INDEX.md) for complete documentation index.
+## Why ThermoTruth
 
-## 🚀 Key Claims
+Classical Byzantine-fault-tolerant (BFT) protocols trade off along two axes:
 
-Based on theoretical analysis and real benchmark measurements (see `docs/results_section.pdf` and executable benchmarks):
+| Approach | Mechanism | Cost |
+| --- | --- | --- |
+| Voting BFT (PBFT, HotStuff) | All-to-all messaging | O(n²) communication |
+| Nakamoto PoW | Hash lottery | High energy, probabilistic finality |
+| **ThermoTruth** | **Energy-weighted thermodynamic ensemble** | **O(n) latency, deterministic free-energy minimization** |
 
-1.  **Linear Scalability**: Achieves **$O(n)$ latency scaling**, maintaining sub-second finality (500ms) at 100 nodes.
-2.  **Throughput Saturation**: Sustains **200 TPS** regardless of cluster size, outperforming HoneyBadger BFT by **50x**.
-3.  **Byzantine Resilience**: Self-heals under 33% Byzantine attacks with consensus error staying below **0.05°C**.
-4.  **Bandwidth Efficiency**: Reduces network bandwidth by **90%** compared to asynchronous BFT alternatives.
-5.  **Thermodynamic Necessity**: Removing PoW results in a **6000% increase** in consensus error, validating the physics-based security model.
+By modeling consensus as free-energy minimization, ThermoTruth gets robust
+outlier rejection and Sybil resistance from the same physical framework instead
+of bolting them on separately.
 
-## 📦 Installation
+## How It Works
 
-### From PyPI (Recommended)
+1. **Proposal.** Each node proposes a `ConsensusState` — a state vector plus a
+   Proof-of-Work whose difficulty adapts to network entropy and estimated
+   Byzantine activity.
+2. **Ensemble metrics.** Proposals are collected into a `ThermodynamicEnsemble`
+   that computes its temperature (∝ proposal variance), Shannon entropy, and
+   Helmholtz free energy `F = U − T·S`.
+3. **Byzantine filtering.** Outliers are removed with a **Median Absolute
+   Deviation (MAD)** modified z-score — robust to contamination that would
+   inflate a naïve mean/standard-deviation filter.
+4. **Annealing.** Simulated annealing with parallel tempering (replica exchange)
+   drives the ensemble toward minimal free energy and sub-threshold variance.
+5. **Extraction.** The agreed value is the **Boltzmann (energy-weighted) mean**
+   of the surviving states — proposals backed by more work weigh more.
+
+The full engine lives in [`src/thermodynamic_truth/core/`](src/thermodynamic_truth/core/)
+(`state.py`, `pow.py`, `annealing.py`, `protocol.py`), with a gRPC transport in
+[`network/`](src/thermodynamic_truth/network/) and CLIs in
+[`cli/`](src/thermodynamic_truth/cli/).
+
+## Installation
+
+### From PyPI
 
 ```bash
 pip install thermodynamic-truth
 ```
 
-### From Source (Development)
+### From source (development)
 
 ```bash
-# Clone the repository
 git clone https://github.com/Kuonirad/thermo-truth-proto.git
 cd thermo-truth-proto
 
-# Install with development dependencies
-pip install -e .[dev]
+# Editable install with dev extras (pytest, black, flake8, mypy)
+pip install -e ".[dev]"
 
-# Run tests
-pytest tests/ -v
-
-# Run real benchmarks
-python benchmarks/comparative_benchmark_real.py
-python benchmarks/ablation_study_real.py
+# Run the test suite
+pytest
 ```
 
-## ⚡ Quick Start
+**Requirements:** Python 3.9+ · NumPy · gRPC (`grpcio`, `protobuf`).
 
-### Run a Local Node
+## Quick Start
+
+### Run a local cluster
 
 ```bash
-# Terminal 1: Start the genesis node
+# Terminal 1 — genesis node
 thermo-node --id node0 --port 50051 --genesis
 
-# Terminal 2: Start a peer node
+# Terminal 2 — peer node
 thermo-node --id node1 --port 50052 --peer localhost:50051
 ```
 
-### Run Benchmarks
+### Inspect a running node
 
 ```bash
-# Latency benchmark
-thermo-benchmark latency --nodes 4 --rounds 10
-
-# Byzantine resilience test
-thermo-benchmark byzantine --nodes 10 --faults 0.33
-
-# Throughput test
-thermo-benchmark throughput --nodes 10 --duration 60
+thermo-client ping localhost:50051
+thermo-client status localhost:50051
 ```
 
-### Docker Cluster
+### Run benchmarks
 
 ```bash
-# Start 4-node cluster
-docker-compose up
+# Consensus latency
+thermo-benchmark latency --nodes 10 --rounds 10
 
-# View logs
-docker-compose logs -f
+# Byzantine resilience (fraction of malicious nodes)
+thermo-benchmark byzantine --nodes 15 --fraction 0.40 --rounds 5
+
+# Sustained throughput (runs for the given duration, in seconds)
+thermo-benchmark throughput --duration 60
 ```
 
-See [Quick Start Guide](docs/QUICK_START_GUIDE.pdf) for detailed instructions.
+### Docker cluster
 
-## 📂 Repository Structure
+```bash
+docker-compose up        # start a multi-node cluster
+docker-compose logs -f   # follow logs
+```
+
+See the [Quick Start Guide](docs/QUICK_START_GUIDE.pdf) for a detailed walkthrough.
+
+## Benchmarks & Results
+
+All figures are produced by the executable suite in
+[`benchmarks/`](benchmarks/) and the `thermo-benchmark` CLI — reproduce them
+locally with the commands above. Detailed methodology is in
+[`docs/results_section.pdf`](docs/results_section.pdf).
+
+| Property | Result | Notes |
+| --- | --- | --- |
+| **Scalability** | ~O(n) latency, sub-second finality at 100 nodes | `thermo-benchmark scaling` |
+| **Throughput** | Saturates at ~200 TPS independent of cluster size | `thermo-benchmark throughput` |
+| **Byzantine tolerance** | **Self-heals at 40% malicious nodes** (> classical 33% BFT bound) | MAD filter, v1.1.0 |
+| **Bandwidth** | ~90% lower than asynchronous BFT baselines | see results report |
+| **Thermodynamic necessity** | Removing PoW sharply increases consensus error | `ablation_study_real.py` |
+
+**Reproduced Byzantine run** (15 nodes, 40% malicious, 5 rounds): the MAD filter
+removed all 6 malicious proposals every round and post-filter variance held at
+~0.006 — well below the 0.05 consensus threshold.
+
+> Performance numbers depend on hardware and configuration; treat the table as
+> indicative of the included benchmarks rather than a service-level guarantee.
+
+## Project Status
+
+ThermoTruth is published on PyPI and exercised by CI across Python 3.9–3.11, but
+it remains a **research-stage (alpha)** protocol — see the `Development Status ::
+3 - Alpha` classifier. It is intended for experimentation and study, not yet for
+securing production value.
+
+- ✅ Core protocol, gRPC networking, and CLIs implemented
+- ✅ Continuous integration: tests, formatting, linting, build, and Docker
+- ✅ Distributed via PyPI trusted publishing (OIDC) with Sigstore signing
+- ✅ 76 automated tests
+- ⚠️ Alpha API — interfaces may change between minor versions
+
+## Repository Layout
 
 ```
 thermo-truth-proto/
-├── src/thermodynamic_truth/     # Core implementation (3,951 lines)
-│   ├── core/                    # Protocol engine (state, PoW, annealing)
-│   ├── network/                 # gRPC server/client
-│   └── cli/                     # CLI tools (node, client, benchmark)
-├── tests/                       # Test suite (41 tests, 90%+ coverage)
-├── benchmarks/                  # Real benchmark suite
-├── docs/                        # Complete documentation
-│   ├── INDEX.md                 # Documentation index (START HERE)
-│   ├── analysis/                # Repository analysis
-│   ├── reports/                 # CRP and implementation reports
-│   └── announcements/           # Release announcements
-├── CSP_LATTICE_EVOLVED.md       # CSP analysis with mutation vectors
-├── CSP_DOSSIER_UPDATED.md       # CSP excavation dossier
-├── IMPLEMENTATION_SUMMARY.md    # Technical architecture
-├── RELEASING.md                 # Release process guide
-├── CHANGELOG.md                 # Version history
-├── SECURITY.md                  # Security policy
-└── docker-compose.yml           # Multi-node deployment
+├── src/thermodynamic_truth/   # Library (~2.9k LOC of hand-written Python)
+│   ├── core/                  # Protocol engine: state, PoW, annealing, protocol
+│   ├── network/               # gRPC server, client, and (de)serialization
+│   └── cli/                   # thermo-node, thermo-client, thermo-benchmark
+├── tests/                     # Test suite (76 tests)
+├── benchmarks/                # Executable benchmark suite
+├── validation/                # Byzantine-resilience validation
+├── docs/                      # Documentation (start at docs/INDEX.md)
+├── CHANGELOG.md               # Version history (Keep a Changelog)
+├── RELEASING.md               # Release process
+├── SECURITY.md                # Security policy
+└── docker-compose.yml         # Multi-node deployment
 ```
 
-**📖 Documentation Navigation**: See [docs/INDEX.md](docs/INDEX.md) for the complete documentation index with links to all reports, analysis, and guides.
+## Documentation
 
-## 📜 License
+- **[docs/INDEX.md](docs/INDEX.md)** — full documentation index (start here)
+- [Whitepaper](docs/whitepaper.md) — protocol design and theory
+- [Results section](docs/results_section.pdf) — benchmark methodology & data
+- [Quick Start Guide](docs/QUICK_START_GUIDE.pdf)
+- [CHANGELOG](CHANGELOG.md)
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+## Contributing
 
-Copyright (c) 2025 Kevin KULL.
+Contributions are welcome. Please:
+
+1. Open an issue describing the change before large PRs.
+2. Keep the suite green: `pytest`, `black src/ tests/`, and
+   `flake8 src/ tests/`.
+3. Add tests for new behavior and update `CHANGELOG.md` under `[Unreleased]`.
+
+The repository ships a [pre-commit](.pre-commit-config.yaml) configuration —
+install it with `pre-commit install`.
+
+## Security
+
+Please report vulnerabilities responsibly as described in
+[SECURITY.md](SECURITY.md). Do not open public issues for security-sensitive
+reports.
+
+## Citation
+
+If you use ThermoTruth in academic work, please cite it:
+
+```bibtex
+@software{kull_thermotruth,
+  author  = {Kull, Kevin},
+  title   = {ThermoTruth Protocol: Thermodynamic Consensus for Sybil-Resistant Networks},
+  url      = {https://github.com/Kuonirad/thermo-truth-proto},
+  version = {1.1.0},
+  year    = {2025}
+}
+```
+
+## License
+
+Licensed under the **Apache License 2.0** — see [LICENSE](LICENSE).
+
+Copyright © 2025–2026 Kevin KULL.
