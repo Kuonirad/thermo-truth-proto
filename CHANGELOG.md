@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+- **Professional README overhaul** - rewritten with accurate badges (PyPI, CI,
+  Python, license, code style), a table of contents, a "How It Works" section, a
+  reproducible benchmark/results table, and honest project status. Corrected
+  stale figures (76 tests, ~2.9k LOC) and broken `thermo-benchmark` flags
+  (`--fraction`, throughput's `--duration`), fixed the X.com link, and added
+  Contributing / Security / Citation sections.
+
 ### Fixed
 - **Adaptive difficulty Byzantine term was dead code** - `_estimate_byzantine_fraction`
   compared raw Shannon entropy against `log2(n)`, but entropy is bounded above by
