@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Real-gRPC integration tests** for the network and CLI client layers
+  (`tests/test_network_client.py`, `tests/test_cli_client.py`, and a shared
+  `live_server` fixture in `tests/conftest.py`). They run against an actual
+  `ThermoNodeServer` on an ephemeral port — no mocks or fake stubs — and exercise
+  error paths against a genuinely closed port. `network/client.py` (incl.
+  `PeerManager`) and `cli/client.py` are now at **100%** line coverage; total
+  project coverage rose ~56% -> ~76% (enforced floor raised 50 -> 70).
+
 ### Documentation
 - **Professional README overhaul** - rewritten with accurate badges (PyPI, CI,
   Python, license, code style), a table of contents, a "How It Works" section, a
