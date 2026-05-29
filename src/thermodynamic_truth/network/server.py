@@ -147,7 +147,7 @@ class ThermoNodeServicer(pb2_grpc.ThermoNodeServicer):
                 f"Received consensus announcement from {request.announcer_id} "
                 f"for round {request.round_number}: "
                 f"variance={request.final_variance:.6f}, "
-                f"temp={request.final_temperature:.6f}°C"
+                f"temp={request.final_temperature:.6f}"
             )
 
             return pb2.AcknowledgeResponse(acknowledged=True, message="Consensus acknowledged")

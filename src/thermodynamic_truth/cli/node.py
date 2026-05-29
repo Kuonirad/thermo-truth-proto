@@ -96,6 +96,29 @@ class ThermoTruthNode:
         self.peer_manager.close_all()
         logger.info(f"Node {self.node_id} stopped")
 
+    def propose_and_record(self, state_value: np.ndarray):
+        """
+        Mine a proposal and record it in this node's own ensemble.
+
+        ``ThermodynamicTruth.propose_state`` only mines and returns the state;
+        it does not add it to ``current_ensemble``. A node must record its own
+        proposal so that it participates in the consensus it computes — peers
+        add their proposals via ``receive_state`` on the gRPC server, and this
+        is the local equivalent. Without it, a node silently excludes its own
+        opinion from every round.
+
+        Args:
+            state_value: The state vector to propose.
+
+        Returns:
+            The recorded ``ConsensusState``, or ``None`` if the proposal failed
+            (e.g. insufficient energy budget).
+        """
+        state = self.protocol.propose_state(state_value, adaptive_difficulty=True)
+        if state is not None:
+            self.protocol.receive_state(state)
+        return state
+
     def run_consensus_loop(self, interval: float = 10.0):
         """
         Run the main consensus loop.
@@ -114,7 +137,7 @@ class ThermoTruthNode:
 
                 # Propose a new state (simulate with random data for now)
                 state_value = np.random.randn(3) * 0.1  # Small random perturbation
-                state = self.protocol.propose_state(state_value, adaptive_difficulty=True)
+                state = self.propose_and_record(state_value)
 
                 if state:
                     # Broadcast state to peers
@@ -139,7 +162,7 @@ class ThermoTruthNode:
                     logger.info(f"  States: {metrics['n_states']}")
                     logger.info(f"  Filtered: {metrics['n_filtered']}")
                     logger.info(f"  Variance: {metrics['final_variance']:.6f}")
-                    logger.info(f"  Temperature: {metrics['final_temperature']:.6f}°C")
+                    logger.info(f"  Temperature: {metrics['final_temperature']:.6f}")
                     logger.info(f"  Entropy: {metrics['final_entropy']:.6f}")
                     logger.info(f"  Converged: {metrics['converged']}")
                     logger.info(f"  Time: {metrics['total_time']:.3f}s")
@@ -180,7 +203,7 @@ class ThermoTruthNode:
         print(f"{'='*60}")
         print(f"Round: {status['round']}")
         print(f"Ensemble Size: {status['ensemble_size']}")
-        print(f"Temperature: {status['current_temperature']:.6f}°C")
+        print(f"Temperature: {status['current_temperature']:.6f}")
         print(f"Entropy: {status['current_entropy']:.6f}")
         print(f"Variance: {status['current_variance']:.6f}")
         print(f"Energy Budget: {status['energy_budget_remaining']:.2f}J")
@@ -189,7 +212,7 @@ class ThermoTruthNode:
         if metrics:
             print(f"\nAggregate Metrics:")
             print(f"  Avg Variance: {metrics['avg_variance']:.6f}")
-            print(f"  Avg Temperature: {metrics['avg_temperature']:.6f}°C")
+            print(f"  Avg Temperature: {metrics['avg_temperature']:.6f}")
             print(f"  Avg Entropy: {metrics['avg_entropy']:.6f}")
             print(f"  Convergence Rate: {metrics['convergence_rate']:.2%}")
 
