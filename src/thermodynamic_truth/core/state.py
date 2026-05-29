@@ -7,7 +7,7 @@ properties (temperature, entropy, energy) computed from the ensemble.
 """
 
 import numpy as np
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict
 from dataclasses import dataclass, field
 from collections import Counter
 import hashlib

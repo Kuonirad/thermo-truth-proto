@@ -12,7 +12,6 @@ Covers the previously-untested ``cli.benchmark`` pure functions and the
 """
 
 import numpy as np
-import pytest
 
 from thermodynamic_truth.cli import benchmark as bench
 from thermodynamic_truth.cli.node import ThermoTruthNode

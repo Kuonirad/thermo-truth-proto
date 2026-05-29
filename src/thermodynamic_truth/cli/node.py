@@ -158,7 +158,7 @@ class ThermoTruthNode:
                     )
 
                     # Log metrics
-                    logger.info(f"\nConsensus Metrics:")
+                    logger.info("\nConsensus Metrics:")
                     logger.info(f"  States: {metrics['n_states']}")
                     logger.info(f"  Filtered: {metrics['n_filtered']}")
                     logger.info(f"  Variance: {metrics['final_variance']:.6f}")
@@ -210,7 +210,7 @@ class ThermoTruthNode:
         print(f"Total Rounds: {status['total_rounds']}")
 
         if metrics:
-            print(f"\nAggregate Metrics:")
+            print("\nAggregate Metrics:")
             print(f"  Avg Variance: {metrics['avg_variance']:.6f}")
             print(f"  Avg Temperature: {metrics['avg_temperature']:.6f}")
             print(f"  Avg Entropy: {metrics['avg_entropy']:.6f}")
@@ -228,10 +228,10 @@ def main():
 Examples:
   # Start genesis node
   python -m thermodynamic_truth.cli.node --id node0 --port 50051 --genesis
-  
+
   # Start peer node
   python -m thermodynamic_truth.cli.node --id node1 --port 50052 --peer localhost:50051
-  
+
   # Start with multiple peers
   python -m thermodynamic_truth.cli.node --id node2 --port 50053 \\
       --peer localhost:50051 --peer localhost:50052

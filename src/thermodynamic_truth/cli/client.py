@@ -8,7 +8,6 @@ Command-line tool for interacting with ThermoTruth nodes.
 import argparse
 import sys
 import json
-import numpy as np
 
 from thermodynamic_truth.network.client import ThermoNodeClient
 
