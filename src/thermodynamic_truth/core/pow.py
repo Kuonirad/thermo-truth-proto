@@ -155,7 +155,11 @@ class ProofOfWork:
         """
         Estimate expected energy cost for given difficulty.
 
-        Expected attempts = 16^difficulty (for hex leading zeros)
+        Mining and verification both require ``int(difficulty)`` leading hex
+        zeros (see ``mine``/``verify_pow``), so the expected number of attempts
+        is ``16 ** int(difficulty)``. Using the raw float (``16 ** difficulty``)
+        overestimated the cost for any fractional difficulty, which made the
+        energy-budget check reject proposals the real PoW could easily afford.
 
         Args:
             difficulty: Target difficulty
@@ -163,7 +167,7 @@ class ProofOfWork:
         Returns:
             Expected energy in Joules
         """
-        expected_attempts = 16**difficulty
+        expected_attempts = 16 ** int(difficulty)
         expected_energy = expected_attempts * self.energy_per_hash
         return expected_energy
 

@@ -290,6 +290,13 @@ class ThermodynamicAnnealer:
         current_ensemble = ensemble
         start_time = time.time()
 
+        # Seed metrics from the initial ensemble so they are well-defined even
+        # if the loop body never runs (max_steps <= 0).
+        step = -1
+        variance = current_ensemble.compute_variance()
+        entropy = current_ensemble.compute_entropy()
+        free_energy = current_ensemble.compute_free_energy()
+
         for step in range(max_steps):
             # Get current temperature
             T = self.schedule.get_temperature(step)
@@ -369,6 +376,13 @@ class ThermodynamicAnnealer:
 
         start_time = time.time()
         self.convergence_history = []
+
+        # Seed metrics from the initial cold chain so they are well-defined even
+        # if the loop body never runs (max_steps <= 0).
+        step = -1
+        cold_chain = self.tempering.get_cold_chain(replicas)
+        variance = cold_chain.compute_variance()
+        entropy = cold_chain.compute_entropy()
 
         for step in range(max_steps):
             # Anneal each replica at its temperature

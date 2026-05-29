@@ -229,7 +229,7 @@ class ThermodynamicTruth:
         if final_variance < self.convergence_threshold:
             logger.info(
                 f"Node {self.node_id}: Consensus achieved! "
-                f"Variance={final_variance:.6f}, Temp={final_temperature:.6f}°C"
+                f"Variance={final_variance:.6f}, Temp={final_temperature:.6f}"
             )
         else:
             logger.warning(
@@ -245,29 +245,41 @@ class ThermodynamicTruth:
 
     def _estimate_byzantine_fraction(self) -> float:
         """
-        Estimate the fraction of Byzantine nodes based on entropy.
+        Estimate the fraction of Byzantine nodes from ensemble disorder.
 
-        High entropy indicates potential Byzantine activity.
+        High disorder (many nodes disagreeing on the state vector) indicates
+        potential Byzantine activity. We measure disorder as *normalized*
+        Shannon entropy, ``H / log2(n)``, which lies in ``[0, 1]``: 0 when all
+        nodes agree on a single vector, 1 when every node proposes a distinct
+        vector.
+
+        Note on the previous implementation: it compared the raw entropy against
+        ``log2(n)`` and only reacted when ``entropy > log2(n)``. Shannon entropy
+        over ``n`` items is bounded above by ``log2(n)``, so that branch could
+        never be taken and the estimate was always 0.0 — silently disabling the
+        Byzantine term of the adaptive-difficulty response.
+
+        An honest, converging network sits at low disorder, so we treat only the
+        disorder *above an even split* (normalized entropy > 0.5) as a Byzantine
+        signal, mapped onto ``[0, 0.5]``.
 
         Returns:
-            Estimated Byzantine fraction (0.0 to 1.0)
+            Estimated Byzantine fraction (0.0 to 0.5)
         """
-        if len(self.current_ensemble.states) < 2:
+        n = len(self.current_ensemble.states)
+        if n < 2:
+            return 0.0
+
+        max_entropy = np.log2(n)
+        if max_entropy <= 0.0:
             return 0.0
 
         entropy = self.current_ensemble.compute_entropy()
+        normalized_disorder = entropy / max_entropy  # 0.0 (agreement) .. 1.0 (all distinct)
 
-        # Heuristic: entropy > log2(n) suggests Byzantine activity
-        n = len(self.current_ensemble.states)
-        expected_entropy = np.log2(n) if n > 1 else 0.0
-
-        if entropy > expected_entropy:
-            # Estimate fraction based on excess entropy
-            excess = entropy - expected_entropy
-            fraction = min(excess / expected_entropy, 0.5)  # Cap at 50%
-            return fraction
-
-        return 0.0
+        # Disorder up to half is treated as ordinary disagreement; only the
+        # excess counts as a Byzantine signal, capped at 50%.
+        return float(min(0.5, max(0.0, normalized_disorder - 0.5)))
 
     def get_status(self) -> Dict:
         """

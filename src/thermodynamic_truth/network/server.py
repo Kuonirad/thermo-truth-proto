@@ -12,6 +12,7 @@ from typing import Optional
 
 from . import thermo_protocol_pb2 as pb2
 from . import thermo_protocol_pb2_grpc as pb2_grpc
+from .utils import stringify_metadata
 from ..core.protocol import ThermodynamicTruth
 from ..core.state import ConsensusState
 
@@ -114,7 +115,7 @@ class ThermoNodeServicer(pb2_grpc.ThermoNodeServicer):
                     proposer_id=state.proposer_id,
                     nonce=state.nonce,
                     difficulty=state.difficulty,
-                    metadata=state.metadata,
+                    metadata=stringify_metadata(state.metadata),
                 )
                 state_proposals.append(proposal)
 
@@ -229,7 +230,7 @@ class ThermoNodeServicer(pb2_grpc.ThermoNodeServicer):
                     proposer_id=state.proposer_id,
                     nonce=state.nonce,
                     difficulty=state.difficulty,
-                    metadata=state.metadata,
+                    metadata=stringify_metadata(state.metadata),
                 )
                 pending_states.append(proposal)
 

@@ -7,7 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Adaptive difficulty Byzantine term was dead code** - `_estimate_byzantine_fraction`
+  compared raw Shannon entropy against `log2(n)`, but entropy is bounded above by
+  `log2(n)`, so the estimate was always `0.0` and the Byzantine multiplier never
+  engaged. Now derived from *normalized* ensemble disorder (`H / log2(n)`).
+- **Energy-cost estimate diverged from real PoW** - `estimate_energy_cost` used
+  `16 ** difficulty` while mining/verification use `int(difficulty)` leading hex
+  zeros, so the energy-budget check overestimated cost for fractional difficulties.
+  It now uses `16 ** int(difficulty)`.
+- **Annealing crashed on zero steps** - `converge` and `converge_with_tempering`
+  raised `UnboundLocalError` when `max_steps <= 0`; metrics are now seeded from the
+  initial ensemble.
+- **Genesis state broke gRPC serialization** - non-string metadata values
+  (e.g. `{"genesis": True}`) could not be packed into the protobuf
+  `map<string, string>` field, silently emptying `RequestStates`/`SyncState`
+  responses. Added `network.utils.stringify_metadata` and applied it at all
+  serialization sites.
+- **Local `pytest` always failed on coverage** - `pytest.ini` pinned
+  `--cov-fail-under=80` while real coverage was ~32% (CI masked it with `=0`).
+  Lowered to an enforced, realistic floor of 30.
+
 ### Added
+- `tests/test_audit_regressions.py` - regression coverage for the bugs above
 - Production-grade publishing pipeline with PyPI trusted publishing
 - GitHub Packages mirror for enterprise users
 - Sigstore keyless signing for all releases
