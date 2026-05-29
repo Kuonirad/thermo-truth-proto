@@ -12,6 +12,7 @@ from typing import List, Optional, Tuple
 
 from . import thermo_protocol_pb2 as pb2
 from . import thermo_protocol_pb2_grpc as pb2_grpc
+from .utils import stringify_metadata
 from ..core.state import ConsensusState
 
 logger = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ class ThermoNodeClient:
                 proposer_id=state.proposer_id,
                 nonce=state.nonce,
                 difficulty=state.difficulty,
-                metadata=state.metadata,
+                metadata=stringify_metadata(state.metadata),
             )
 
             # Send proposal
