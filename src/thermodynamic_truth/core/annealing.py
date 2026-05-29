@@ -6,9 +6,9 @@ This is the core algorithm that drives the system toward low-energy, high-cohere
 """
 
 import numpy as np
-from typing import List, Tuple, Optional, Callable
+from typing import List, Tuple, Optional
 import time
-from .state import ConsensusState, ThermodynamicEnsemble
+from .state import ThermodynamicEnsemble
 
 
 class AnnealingSchedule:

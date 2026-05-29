@@ -8,7 +8,6 @@ Command-line tool for interacting with ThermoTruth nodes.
 import argparse
 import sys
 import json
-import numpy as np
 
 from thermodynamic_truth.network.client import ThermoNodeClient
 
@@ -22,7 +21,7 @@ def cmd_ping(args):
         print(f"✓ Node {status['responder_id']} is alive")
         print(f"  Round: {status['current_round']}")
         print(f"  Ensemble Size: {status['ensemble_size']}")
-        print(f"  Temperature: {status['temperature']:.6f}°C")
+        print(f"  Temperature: {status['temperature']:.6f}")
     else:
         print(f"✗ Failed to ping {args.node}")
         sys.exit(1)
@@ -77,7 +76,7 @@ def cmd_sync(args):
         for item in history:
             print(f"  Round {item['round']}:")
             print(f"    Variance: {item['final_variance']:.6f}")
-            print(f"    Temperature: {item['final_temperature']:.6f}°C")
+            print(f"    Temperature: {item['final_temperature']:.6f}")
             print(f"    Entropy: {item['final_entropy']:.6f}")
 
 

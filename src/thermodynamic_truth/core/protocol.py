@@ -9,13 +9,13 @@ This is the core consensus protocol that integrates all thermodynamic components
 """
 
 import numpy as np
-from typing import List, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 import time
 import logging
 
 from .state import ConsensusState, ThermodynamicEnsemble, create_genesis_state
 from .pow import ProofOfWork, EnergyBudget
-from .annealing import ThermodynamicAnnealer, AnnealingSchedule, ParallelTempering
+from .annealing import ThermodynamicAnnealer, AnnealingSchedule
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

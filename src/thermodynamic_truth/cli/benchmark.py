@@ -13,7 +13,6 @@ import json
 from typing import List, Dict
 
 from thermodynamic_truth.core.protocol import ThermodynamicTruth
-from thermodynamic_truth.core.state import ConsensusState
 
 
 def benchmark_latency(n_nodes: int, n_rounds: int = 10) -> Dict:

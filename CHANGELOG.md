@@ -26,10 +26,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   serialization sites.
 - **Local `pytest` always failed on coverage** - `pytest.ini` pinned
   `--cov-fail-under=80` while real coverage was ~32% (CI masked it with `=0`).
-  Lowered to an enforced, realistic floor of 30.
+  Now an enforced, realistic floor (raised to 50 as the suite grew).
+- **Node excluded its own proposal from consensus** - the `cli.node` consensus
+  loop broadcast each proposal to peers but never recorded it locally, so a node
+  ran consensus purely on peer states. Added `ThermoTruthNode.propose_and_record`,
+  which mines and records the node's own state.
+- **Misleading `°C` temperature unit** - consensus "temperature" is a
+  variance-based thermodynamic analog, not degrees Celsius. Removed the `°C`
+  suffix from CLI/server output.
 
 ### Added
-- `tests/test_audit_regressions.py` - regression coverage for the bugs above
+- `tests/test_audit_regressions.py` - regression coverage for the core bugs
+- `tests/test_cli_benchmark.py` and `tests/test_network_server.py` - coverage for
+  the CLI/benchmark helpers and the gRPC servicer (raised total coverage ~32% -> ~56%)
+- `ThermoTruthNode.propose_and_record` helper
 - Production-grade publishing pipeline with PyPI trusted publishing
 - GitHub Packages mirror for enterprise users
 - Sigstore keyless signing for all releases
